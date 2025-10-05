@@ -1,5 +1,4 @@
 streamlit
 google-genai
 pandas
-sqlite3
 python-dotenv
