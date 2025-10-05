@@ -27,13 +27,11 @@ def read_sql_query(sql,db):
     cursor = connection.cursor()
     cursor.execute(sql)
     rows = cursor.fetchall()
+    columns = [description[0] for description in cursor.description]
     connection.commit()
     connection.close()
 
-    for row in rows:
-        print(row)
-
-    return rows
+    return pd.DataFrame(rows, columns = columns)
 
 #Function to identify if response is an SQL Query
 def is_sql_query(text: str) -> bool:
@@ -130,7 +128,7 @@ if submit and question:
         st.code(response, language = "sql")
 
         try:
-            data = pd.DataFrame(read_sql_query(response,"Chinook_Sqlite.sqlite"))
+            data = read_sql_query(response,"Chinook_Sqlite.sqlite")
             st.subheader("The Response is:")
             st.dataframe(data)
         except Exception as e:
