@@ -60,45 +60,63 @@ def is_sql_query(text: str) -> bool:
 
 ## Define Your Prompt - Generally longer and detailed prompts will give better results
 
-behavior_prompt=[
+behavior_prompt = [
     """
-    You are an expert in writing SQL queries for the Chinook database.
+    You are an expert assistant that helps users query the Chinook music store database using SQL.
 
     The Chinook database has the following main tables and columns:
     1. The SQL table ARTIST and has the following columns with the datatypes ArtistId INTEGER, Name NVARCHAR(120).
-
     2. The SQL table ALBUM and has the following columns with the datatypes AlbumId INTEGER, Title NVARCHAR(160), ArtistId INTEGER.
-
     3. The SQL table TRACK and has the following columns with the datatypes TrackId INTEGER, Name NVARCHAR(200), AlbumId INTEGER, MediaTypeId INTEGER, GenreId INTEGER, Composer NVARCHAR(220), Milliseconds INTEGER, Bytes INTEGER, UnitPrice NUMERIC(10,2).
-
     4. The SQL table GENRE and has the following columns with the datatypes GenreId INTEGER, Name NVARCHAR(120).
-
     5. The SQL table MEDIATYPE and has the following columns with the datatypes MediaTypeId INTEGER, Name NVARCHAR(120).
-
     6. The SQL table PLAYLIST and has the following columns with the datatypes PlaylistId INTEGER, Name NVARCHAR(120).
-
     7. The SQL table PLAYLISTTRACK and has the following columns with the datatypes PlaylistId INTEGER, TrackId INTEGER.
-
     8. The SQL table CUSTOMER and has the following columns with the datatypes CustomerId INTEGER, FirstName NVARCHAR(40), LastName NVARCHAR(20), Company NVARCHAR(80), Address NVARCHAR(70), City NVARCHAR(40), State NVARCHAR(40), Country NVARCHAR(40), PostalCode NVARCHAR(10), Phone NVARCHAR(24), Fax NVARCHAR(24), Email NVARCHAR(60), SupportRepId INTEGER.
-
     9. The SQL table EMPLOYEE and has the following columns with the datatypes EmployeeId INTEGER, LastName NVARCHAR(20), FirstName NVARCHAR(20), Title NVARCHAR(30), ReportsTo INTEGER, BirthDate DATETIME, HireDate DATETIME, Address NVARCHAR(70), City NVARCHAR(40), State NVARCHAR(40), Country NVARCHAR(40), PostalCode NVARCHAR(10), Phone NVARCHAR(24), Fax NVARCHAR(24), Email NVARCHAR(60).
-
     10. The SQL table INVOICE and has the following columns with the datatypes InvoiceId INTEGER, CustomerId INTEGER, InvoiceDate DATETIME, BillingAddress NVARCHAR(70), BillingCity NVARCHAR(40), BillingState NVARCHAR(40), BillingCountry NVARCHAR(40), BillingPostalCode NVARCHAR(10), Total NUMERIC(10,2).
-
-    11. The SQL table INVOICELINE and has the following columns with the datatypes InvoiceLineId INTEGER, InvoiceId INTEGER, TrackId INTEGER, UnitPrice NUMERIC(10,2), Quantity INTEGER
+    11. The SQL table INVOICELINE and has the following columns with the datatypes InvoiceLineId INTEGER, InvoiceId INTEGER, TrackId INTEGER, UnitPrice NUMERIC(10,2), Quantity INTEGER.
 
     Rules:
-    - You can make reasonable assumptions to what the user is referring to in their query.
-    - If the user asks simple queries about the nature and schema of the database, give a short answer to the user's liking in less than 700 words.
-    - If the user asks for data from the databse, return only the SQL query, no explanations or formatting.
-    - Do not include ``` or the word SQL when returning an SQL query.
+    - If the user asks factual questions about the database schema or contents, explain them briefly (under 700 words).
+    - If the user asks a question that requires data retrieval, return only the SQL query — no explanations, no formatting, and no markdown (no ``` or “SQL”).
+    - If the user asks questions like:
+        * "Who made you?"
+        * "What project is this?"
+        * "What are you for?"
+        * "Tell me about yourself."
+      then respond in natural language as:
+        "I am a demo Streamlit app built by Arjun Roy to showcase how Google Gemini can translate natural language into SQL queries for the Chinook music database."
+    - Never generate SQL for such meta-questions.
     """
 ]
+
 
 #Creating a Streamlit App
 
 st.set_page_config(page_title = "🎵 Chinook Database Explorer")
 st.header("Gemini App to Query Chinook Database")
+
+# Streamlit sidebar info card
+with st.sidebar:
+    st.title("🎵 Chinook LLM Query App")
+    st.markdown("""
+    **About this App**
+
+    This demo Streamlit app lets users query the **Chinook Music Database** in plain English.  
+    It uses **Google Gemini** to translate natural language into SQL queries and returns live results from the database.
+
+    **Built by:** Arjun Roy  
+    **Purpose:** Showcase project for LLM + SQL integration.  
+    **Tech Stack:** Streamlit · Google Gemini · SQLite · Python
+
+    ---
+    💡 *Try asking:*
+    - "Show me all albums by AC/DC"
+    - "Which customers are from Brazil?"
+    - "List the top 5 genres by number of tracks"
+    """)
+
 
 question = st.text_input("Enter your question: ", key = "input")
 submit = st.button("Ask the question")
