@@ -115,12 +115,12 @@ with st.sidebar:
     - "List the top 5 genres by number of tracks"
     """)
 
+with st.form("Query Form"):
+    question = st.text_input("Enter your question: ")
+    submitted = st.form_submit_button("Ask the question")
 
-question = st.text_input("Enter your question: ", key = "input")
-submit = st.button("Ask the question")
-
-#If submit is clicked
-if submit and question:
+#If query submitted
+if submitted and question:
     response = get_gemini_response(question,behavior_prompt)
 
     if is_sql_query(response):
