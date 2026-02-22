@@ -6,18 +6,19 @@ import pandas as pd
 from google import genai
 
 #Config our client connection using the GOOGLE API KEY from Streamlit secrets
-#client = genai.Client(api_key = st.secrets["GOOGLE_API_KEY"])
+@st.cache_resource
+def get_client():
+    return genai.Client(api_key = st.secrets["GOOGLE_API_KEY"])
 
 #Function to load Google Gemini Model and provide SQL query as response
-
-'''
 def get_gemini_response(question, behavior_prompt):
+    client = get_client()
     response = client.models.generate_content(
         model = "gemini-2.5-flash",
         contents = [behavior_prompt[0], question]
     )
     return response.text
-'''
+
 
 #Function to execute LLM query on SQL database
 
@@ -120,7 +121,7 @@ submit = st.button("Ask the question")
 
 #If submit is clicked
 if submit and question:
-    response = "SELECT * FROM ARTIST LIMIT 5"
+    response = get_gemini_response(question,behavior_prompt)
 
     if is_sql_query(response):
         st.write("*Generated SQL Query*")
